@@ -19,9 +19,9 @@ driver = webdriver.Chrome(service=service)
 
 # Tham số tìm kiếm
 params = {
-    'From': 'Shanghai (PVG)',
-    'To': 'Hà Nội (HAN)',
-    'Depart': '20/09/2024',
+    'From': 'Beijing (PEK)',
+    'To': 'Hồ Chí Minh (SGN)',
+    'Depart': '23/09/2024',
     'Return': '',
     'ADT': '1',
     'CHD': '0',
@@ -40,15 +40,17 @@ time.sleep(15)
 
 # Thiết lập kết nối MySQL
 db = mysql.connector.connect(
-    host="localhost",
-    user="root",
-    password="Anhhung98@",
-    database="airport"
+    host='116.205.225.217',
+    port=16306,
+    database='yueya',
+    user='root',
+    password='6+Qj!hKT#D*1-YL<',
+    charset='utf8mb4',
 )
 cursor = db.cursor()
 
 sql = """
-INSERT INTO ticket (start_cityname, start_citycode, mid_cityname, end_cityname, end_citycode, air_no, air_company, air_duration, step, start_time, end_time, start_price, normal_price, enable, source, createtime)
+INSERT INTO yueya_airroute (start_cityname, start_citycode, mid_cityname, end_cityname, end_citycode, air_no, air_company, air_duration, step, start_time, end_time, start_price, normal_price, enable, source, createtime)
 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
@@ -204,9 +206,7 @@ try:
                 total_price = re.sub(r'\D', '', value)
 
                 if total_price:
-                    total_price_decimal = Decimal(total_price) / Decimal('100')
-                    print("test total", total_price_decimal)
-                    print("Kiểu dữ liệu của total_price:", type(total_price_decimal))
+                    total_price_decimal = Decimal(total_price) / Decimal('100') 
 
                     # Thực hiện chèn dữ liệu vào MySQL
                     values = (city_name_start_1, city_code_start_1, destination, city_name_to_2, city_code_to_2, flight_code_1, airline_name_1, 0, 2, format_time_start_1, format_time_to_2, total_price, total_price, 1, 'bestprice.vn', create_time)
