@@ -7,6 +7,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from bs4 import BeautifulSoup
 from urllib.parse import urlencode
 import time
+from datetime import datetime
+import re
 
 # Đường dẫn đến chromedriver
 chrome_driver_path = "C:/Users/hungb/Downloads/chromedriver.exe"
@@ -17,7 +19,7 @@ driver = webdriver.Chrome(service=service)
 params = {
     'From': 'Shanghai (PVG)',
     'To': 'Hà Nội (HAN)',
-    'Depart': '19/09/2024',
+    'Depart': '20/09/2024',
     'Return': '',
     'ADT': '1',
     'CHD': '0',
@@ -99,7 +101,7 @@ try:
                     flight_to_1 = ''
 
                 if len(airport_to_elements) > 4:
-                    airport_to_1 = airport_to_elements[4].get_text(strip=True) if len(airport_to_elements) > 4 else ''
+                    airport_to_1 = airport_to_elements[5].get_text(strip=True) if len(airport_to_elements) > 4 else ''
                 else:
                     airport_to_1 = ''
 
@@ -142,15 +144,49 @@ try:
                     destination = ''
                     wait_time = ''
                     print(f"Đã xảy ra lỗi khi kiểm tra thông tin đổi máy bay: {e}")
+                
+
+                # Thông tin về chuyến bay 1
+                city_name_start_1 = flight_from_1.split(' (')[0]
+                city_code_start_1 = flight_from_1.split('(')[1].replace(')', '')
+                city_name_to_1 = flight_to_1.split(' (')[0]
+                city_code_to_1 = flight_to_1.split('(')[1].replace(')', '')
+
+                date_to_1 = date_text_1.strip(', ')
+                time_start_1 = flight_date_from_1 + " " + flight_time_from_1
+                time_to_1 = date_to_1 + " " + flight_time_to_1
+                date_time_start_1 = datetime.strptime(time_start_1, "%d-%m-%Y %H:%M")
+                format_time_start_1 = date_time_start_1.strftime("%Y-%m-%d %H:%M")
+                date_time_to_1 = datetime.strptime(time_to_1, "%d-%m-%Y %H:%M")
+                format_time_to_1 = date_time_to_1.strftime("%Y-%m-%d %H:%M")
+
+                # Thông tin về chuyến bay 2
+                city_name_start_2 = flight_from_2.split(' (')[0]
+                city_code_start_2 = flight_from_2.split('(')[1].replace(')', '')
+                city_name_to_2 = flight_to_2.split(' (')[0]
+                city_code_to_2 = flight_to_2.split('(')[1].replace(')', '')
+
+                date_to_2 = date_text_2.strip(', ')
+                time_start_2 = flight_date_from_2 + " " + flight_time_from_2
+                time_to_2 = date_to_2 + " " + flight_time_to_2
+                date_time_start_2 = datetime.strptime(time_start_2, "%d-%m-%Y %H:%M")
+                format_time_start_2 = date_time_start_2.strftime("%Y-%m-%d %H:%M")
+                date_time_to_2 = datetime.strptime(time_to_2, "%d-%m-%Y %H:%M")
+                format_time_to_2 = date_time_to_2.strftime("%Y-%m-%d %H:%M")
 
                 # Ghi vào file
                 file.write(f"Infor ticket {index+1}:\n")
                 file.write("Chuyến bay 1:\n")
-                file.write(f"Từ: {flight_from_1}, {airport_from_1}\n")
-                file.write(f"Thời gian đi: {flight_time_from_1}, {flight_date_from_1}\n")
-                file.write(f"Sân bay đi: {flight_code_1} - {airline_name_1}\n")
-                file.write(f"Đến: {flight_to_1}\n")
-                file.write(f"Thời gian đến: {flight_time_to_1}{date_text_1}\n")
+                # file.write(f"Từ: {flight_from_1}, {airport_from_1}\n")
+                file.write(f"Tên thành phố đi: {city_name_start_1}\n")
+                file.write(f"Mã thành phố đi: {city_code_start_1}\n")
+                file.write(f"Thời gian đi: {format_time_start_1}\n")
+                file.write(f"Sân bay đi: {airport_from_1}\n")
+                file.write(f"Mã máy bay: {flight_code_1}\n")
+                file.write(f"Hãng bay: {airline_name_1}\n")
+                file.write(f"Tên thành phố đến: {city_name_to_1}\n")
+                file.write(f"Mã thành phố đến: {city_code_to_1}\n")
+                file.write(f"Thời gian đến: {format_time_to_1}\n")
                 file.write(f"Sân bay đến: {airport_to_1}\n\n")
 
                 if destination != '' and wait_time != '':
@@ -160,11 +196,15 @@ try:
 
                 if flight_from_2 and airport_from_2 and flight_time_from_2 and flight_date_from_2 and flight_code_2 and airline_name_2 and flight_to_2 and airport_to_2 and flight_time_to_2:
                     file.write("Chuyến bay 2:\n")
-                    file.write(f"Từ: {flight_from_2}, {airport_from_2}\n")
-                    file.write(f"Thời gian: {flight_time_from_2}, {flight_date_from_2}\n")
-                    file.write(f"Sân bay đi: {flight_code_2} - {airline_name_2}\n")
-                    file.write(f"Đến: {flight_to_2}\n")
-                    file.write(f"Thời gian đến: {flight_time_to_2}{date_text_2}\n")
+                    file.write(f"Tên thành phố đi: {city_name_start_2}\n")
+                    file.write(f"Mã thành phố đi: {city_code_start_2}\n")
+                    file.write(f"Sân bay đi: {airport_to_1}\n")
+                    file.write(f"Thời gian đi: {format_time_start_2}\n")
+                    file.write(f"Mã máy bay: {flight_code_2}\n")
+                    file.write(f"Hãng bay: {airline_name_2}\n")
+                    file.write(f"Tên thành phố đến: {city_name_to_2}\n")
+                    file.write(f"Mã thành phố đến: {city_code_to_2}\n")
+                    file.write(f"Thời gian đến: {format_time_to_2}\n")
                     file.write(f"Sân bay đến: {airport_to_2}\n\n")
 
                 file.write(f"Price(VND):\n")
@@ -179,7 +219,7 @@ try:
                     label = label_div.get_text(strip=True) if label_div else ''
                     value_div = row.find('div', class_='price-value')
                     value = value_div.get_text(strip=True) if value_div else ''
-                    file.write(f"{label}: {value}\n")
+                    file.write(f"{label} {value}\n")
 
                 rows2 = soup.find_all('div', class_='row')
                 for row in rows2:
@@ -187,9 +227,11 @@ try:
                     label = label_div.get_text(strip=True) if label_div else ''
                     value_div = row.find('div', class_='price-total')
                     value = value_div.get_text(strip=True) if value_div else ''
+                    total_price = re.sub(r'\D', '', value)
+                    # format_total_price = int(total_price)
                     if label and value:
                         file.write(f"----------------------\n")
-                        file.write(f"{label}: {value}\n")
+                        file.write(f"{label} {total_price} VND\n")
 
                 file.write("\n------------------------------------------------------------------------------\n\n")
 
