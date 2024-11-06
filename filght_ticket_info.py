@@ -9,17 +9,22 @@ from urllib.parse import urlencode
 import time
 from datetime import datetime
 import re
+import sys
+import io
+
+# Đặt stdout sử dụng mã hóa UTF-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Đường dẫn đến chromedriver
-chrome_driver_path = "C:/Users/hungb/Downloads/chromedriver.exe"
+chrome_driver_path = "C:/Users/hungb/Documents/chromedriver.exe"
 service = Service(chrome_driver_path)
 driver = webdriver.Chrome(service=service)
 
 # Tham số tìm kiếm
 params = {
-    'From': 'Shanghai (PVG)',
+    'From': 'Beijing (PEK)',
     'To': 'Hà Nội (HAN)',
-    'Depart': '20/09/2024',
+    'Depart': '23/09/2024',
     'Return': '',
     'ADT': '1',
     'CHD': '0',

@@ -11,24 +11,39 @@ from datetime import datetime
 import re
 import mysql.connector
 from decimal import Decimal
+import sys
+import io
+
+# Đặt stdout sử dụng mã hóa UTF-8
+sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
 
 # Đường dẫn đến chromedriver
-chrome_driver_path = "C:/Users/hungb/Downloads/chromedriver.exe"
+chrome_driver_path = "D:/chomedriver/chromedriver.exe"
 service = Service(chrome_driver_path)
 driver = webdriver.Chrome(service=service)
 
 # Tham số tìm kiếm
 params = {
-    'From': 'Beijing (PEK)',
+    'From': 'Chengdu (TFU)',
     'To': 'Hồ Chí Minh (SGN)',
-    'Depart': '23/09/2024',
+    'Depart': '7/11/2024',
     'Return': '',
     'ADT': '1',
     'CHD': '0',
     'INF': '0'
 }
 
-# Xây dựng URL với tham số tìm kiếm
+# Hangzhou (HGH)
+# Shanghai (PVG)
+# Beijing (PEK)
+# Guangzhou (CAN)
+# Chengdu (TFU)
+
+# Hà Nội (HAN)
+# Hồ Chí Minh (SGN)
+
+
+# Xây dựng URL với tham số tìm kiếm    
 base_url = "https://www.bestprice.vn/ve-may-bay/tim-kiem-ve"
 query_string = urlencode(params, doseq=True)
 full_url = f"{base_url}?{query_string}"
@@ -62,11 +77,6 @@ try:
     bpv_list_items = flight_data_content.find_elements(By.CLASS_NAME, 'bpv-list-item')
 
     print(f"Đã tìm thấy {len(bpv_list_items)} thẻ 'bpv-list-item'.")
-
-    directory_path = "D:/Juhard"
-    os.makedirs(directory_path, exist_ok=True)
-    file_path = os.path.join(directory_path, 'flight_data.txt')
-
  
     for index, item in enumerate(bpv_list_items):
         try:
@@ -228,3 +238,5 @@ finally:
     driver.quit()
     cursor.close()
     db.close()
+
+
